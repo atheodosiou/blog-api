@@ -1,9 +1,9 @@
-import { connect } from 'mongoose';
+import { connect, ConnectionOptions } from 'mongoose';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 export async function connectToDB() {
-    const options = {
+    const options: ConnectionOptions = {
         useNewUrlParser: true,
         useUnifiedTopology: true
     };
