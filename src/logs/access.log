@@ -7,3 +7,5 @@
 ::1 - - [27/Feb/2021:17:53:00 +0000] "GET /api/v1/hello HTTP/1.1" 200 19 "-" "PostmanRuntime/7.26.10"
 ::1 - - [27/Feb/2021:17:53:04 +0000] "GET /api/v1/hello-again HTTP/1.1" 200 25 "-" "PostmanRuntime/7.26.10"
 ::1 - - [27/Feb/2021:17:53:08 +0000] "GET /api/v1/hello-again/asdfsaf HTTP/1.1" 404 33 "-" "PostmanRuntime/7.26.10"
+::1 - - [27/Feb/2021:21:09:51 +0000] "POST /api/v1/auth/register HTTP/1.1" 201 42 "-" "PostmanRuntime/7.26.10"
+::1 - - [27/Feb/2021:21:10:02 +0000] "POST /api/v1/auth/login HTTP/1.1" 200 144 "-" "PostmanRuntime/7.26.10"
