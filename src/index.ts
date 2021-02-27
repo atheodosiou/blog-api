@@ -6,6 +6,8 @@ import morgan from "morgan";
 import { accessLogger } from "./utils/morganLogger";
 import { cors } from "./utils/cors";
 
+config();
+
 // Initialize express
 const app = express();
 
