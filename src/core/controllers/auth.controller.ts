@@ -12,12 +12,13 @@ export const register = async (
     response: Response,
     next: NextFunction
 ) => {
-    const { username, email, password } = request.body;
+    const { firstName, lastName, email, password } = request.body;
 
     const { error, value } = UserRegistrationValidation.validate({
-        username,
+        firstName,
+        lastName,
         email,
-        password,
+        password
     });
 
     if (error) {
@@ -39,7 +40,7 @@ export const register = async (
                 return response.status(400).json(existsError);
             }
 
-            const user = await new UserModel(value).save();
+            await new UserModel(value).save();
             return response.status(201).json({ message: 'Registration was successful!' });
         } catch (error) {
             const commonError: ICommonError = {
@@ -96,7 +97,6 @@ export const login = async (
                 _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                username: user.username,
                 email: user.email
             }
         })

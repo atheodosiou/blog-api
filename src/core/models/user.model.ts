@@ -7,9 +7,8 @@ import { config } from 'dotenv';
 config();
 
 export interface IUser extends Document {
-    firstName?: string;
-    lastName?: string;
-    username?: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     created_at?: string;
@@ -21,16 +20,12 @@ export const UserSchema = new Schema(
         firstName: {
             type: String,
             min: 2,
-            default: "",
+            required: true
         },
         lastName: {
             type: String,
             min: 2,
-            default: "",
-        },
-        username: {
-            type: String,
-            min: 4
+            required: true
         },
         email: {
             type: String,
@@ -72,9 +67,8 @@ UserSchema.pre<IUser>("save", async function (next) {
 export const UserModel = model<IUser>("User", UserSchema);
 
 export const UserRegistrationValidation = Joi.object({
-    username: Joi.string().min(4).optional(),
-    firstName: Joi.string().min(2).optional(),
-    lastName: Joi.string().min(2).optional(),
+    firstName: Joi.string().min(2).required(),
+    lastName: Joi.string().min(2).required(),
     email: Joi.string().email().min(4).required(),
     password: Joi.string().alphanum().min(8).max(16).required(),
 });

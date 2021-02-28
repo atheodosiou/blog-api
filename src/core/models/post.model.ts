@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import Joi from "@hapi/joi";
 import { Document } from "mongoose";
 import { CategorySchema } from './category.model';
+import { IUser } from "./user.model";
 
 export interface IPost extends Document {
     title: string;
@@ -25,7 +26,7 @@ export interface IComment {
 
 export const CommentSchema = new Schema({
     by: { type: String, required: true, default: "" },
-    on: { type: Date, required: true, default: new Date() },
+    at: { type: Date, required: true, default: new Date() },
     comment: { type: String, required: true, default: "" },
 });
 
@@ -33,15 +34,15 @@ export const PostSchema = new Schema(
     {
         title: { type: String, min: 10, required: true, unique: true, default: "" },
         preview: { type: String, min: 10, required: true, default: "", },
-        postDate: { type: Date, required: true, default: new Date() },
+        postDate: { type: Date, default: new Date() },
         author: { type: String, required: true, unique: true },
-        imageUrl: { type: String },
+        imageUrl: { type: String, required: true },
         content: { type: String, required: true },
         comments: { type: [CommentSchema], default: [] },
-        likes: { type: Number },
-        shares: { type: Number },
+        likes: { type: Number, default: 0 },
+        shares: { type: Number, default: 0 },
         category: { type: CategorySchema },
-        tags: { type: [String] }
+        tags: { type: [String], default: [] }
     },
     { timestamps: true }
 );
@@ -52,9 +53,9 @@ export const PostModel = model<IPost>("Post", PostSchema);
 export const PostCreationValidation = Joi.object({
     title: Joi.string().min(10).required().allow(''),
     preview: Joi.string().min(10).required().allow(''),
-    postDate: Joi.date().required(),
-    author: Joi.string().required(),
-    imageUrl: Joi.string(),
+    postDate: Joi.date().optional(),
+    author: Joi.string().optional(),
+    imageUrl: Joi.string().required(),
     content: Joi.string().required(),
     comments: Joi.array().optional(),
     likes: Joi.number().optional(),

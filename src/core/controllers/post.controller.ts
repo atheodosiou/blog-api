@@ -1,15 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
+import { IUser, UserModel } from '../models/user.model';
+import { PostCreationValidation, PostModel } from '../models/post.model';
+import { ICommonError } from '../models/interfaces/error.interface';
+import { isValidObjectId } from 'mongoose';
 
-export const getPosts = (req: Request, res: Response, next: NextFunction) => {
-    return res.status(200).json({ message: 'Get all posts' });
+let user: IUser | null;
+
+export const getPosts = async (req: Request, res: Response, next: NextFunction) => {
+    const posts = await PostModel.find({}, { content: 0, comments: 0, createdAt: 0, updatedAt: 0, __v: 0 });
+    return res.status(200).json(posts);
 }
 
-export const getSinglePost = (req: Request, res: Response, next: NextFunction) => {
-    return res.status(200).json({ message: 'Get sigle post' });
+export const getSinglePost = async (req: Request, res: Response, next: NextFunction) => {
+    if (!isValidObjectId(req.params.postId)) {
+        return res.status(400).json(getErrorMessage("The object id is not valid", 400));
+    }
+    const posts = await PostModel.findOne({ _id: req.params.postId }, { createdAt: 0, updatedAt: 0, __v: 0 });
+    return res.status(200).json(posts);
 }
 
-export const addPost = (req: Request, res: Response, next: NextFunction) => {
-    return res.status(200).json({ message: 'Add new post' });
+export const addPost = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).userId;
+    try {
+        const author = await getAuthor(userId);
+        const { value, error } = PostCreationValidation.validate(req.body);
+        if (error) {
+            return res.status(400).json({ errors: error.details.map(x => x.message) });
+        }
+        const newPost = new PostModel(value);
+        newPost.author = author;
+        const saved = await newPost.save();
+        return res.status(200).json(saved);
+    } catch (error) {
+        return res.status(500).json(getErrorMessage("Unable to save new post", 500, error));
+    }
 }
 
 export const updatePost = (req: Request, res: Response, next: NextFunction) => {
@@ -18,4 +42,34 @@ export const updatePost = (req: Request, res: Response, next: NextFunction) => {
 
 export const deletePost = (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({ message: 'Delete post' });
+}
+
+export const addComment = (req: Request, res: Response, next: NextFunction) => {
+    return res.status(200).json({ message: 'Delete post' });
+}
+
+export const likePost = (req: Request, res: Response, next: NextFunction) => {
+    return res.status(200).json({ message: 'Delete post' });
+}
+
+export const sharePost = (req: Request, res: Response, next: NextFunction) => {
+    return res.status(200).json({ message: 'Delete post' });
+}
+
+const getAuthor = (userId: string): Promise<string> => {
+    return new Promise<string>(async (resolve, reject) => {
+        if (user) resolve(`${user.firstName} ${user.lastName}`);
+        const foundUser = await UserModel.findOne({ _id: userId });
+        if (foundUser) {
+            user = <IUser>foundUser;
+            resolve(`${foundUser.firstName} ${foundUser.lastName}`)
+        } else {
+            reject('')
+        }
+    });
+
+}
+
+const getErrorMessage = (message: string, statusCode: number = 500, error?: any): ICommonError => {
+    return error ? { message: message, statusCode: statusCode, details: error } : { message: message, statusCode: statusCode };
 }
