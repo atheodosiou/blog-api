@@ -35,7 +35,7 @@ export const PostSchema = new Schema(
         title: { type: String, min: 10, required: true, unique: true, default: "" },
         preview: { type: String, min: 10, required: true, default: "", },
         postDate: { type: Date, default: new Date() },
-        author: { type: String, required: true, unique: true },
+        author: { type: String, required: true},
         imageUrl: { type: String, required: true },
         content: { type: String, required: true },
         comments: { type: [CommentSchema], default: [] },
