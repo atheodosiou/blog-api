@@ -5,7 +5,7 @@ import { auth } from "../midlewares/auth.midleware";
 const postRouter = Router();
 
 // Get all posts
-postRouter.get("/", auth, controllers.getPosts);
+postRouter.get("/paginated", controllers.getPosts);
 
 // Get post by id
 postRouter.get("/:postId", auth, controllers.getSinglePost);
