@@ -1,11 +1,12 @@
 import { Router } from "express";
 import * as controllers from "../controllers/index.controller";
+import { apiKeyVerificaton } from "../midlewares/apiKey.midleware";
 import { auth } from "../midlewares/auth.midleware";
 
 const postRouter = Router();
 
 // Get all posts
-postRouter.get("/paginated", controllers.getPosts);
+postRouter.post("/paginated", apiKeyVerificaton, controllers.getPosts);
 
 // Get post by id
 postRouter.get("/:postId", auth, controllers.getSinglePost);
