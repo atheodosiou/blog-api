@@ -3,12 +3,44 @@ import { IUser, UserModel } from '../models/user.model';
 import { PostCreationValidation, PostModel } from '../models/post.model';
 import { ICommonError } from '../models/interfaces/error.interface';
 import { isValidObjectId } from 'mongoose';
+import { type } from 'os';
 
 let user: IUser | null;
 
 export const getPosts = async (req: Request, res: Response, next: NextFunction) => {
-    const posts = await PostModel.find({}, { content: 0, comments: 0, createdAt: 0, updatedAt: 0, __v: 0 });
-    return res.status(200).json(posts);
+    const { limit, offset } = req.body;
+    if (limit === null || limit === undefined || offset === null || offset === undefined) {
+        const commonError: ICommonError = {
+            statusCode: 400,
+            message: "Bad request",
+            details: "Properties 'limit' and 'offset' are required"
+        };
+        return res.status(commonError.statusCode).send(commonError);
+    }
+    if (limit < 0 || offset < 0) {
+        const commonError: ICommonError = {
+            statusCode: 400,
+            message: "Bad request",
+            details: "Properties 'limit' and 'offset' values must be non-negative."
+        };
+        return res.status(commonError.statusCode).send(commonError);
+    }
+    if (typeof (limit) !== 'number' || typeof (offset) !== 'number') {
+        const commonError: ICommonError = {
+            statusCode: 400,
+            message: "Bad request",
+            details: "Properties 'limit' and 'offset' must be numbers"
+        };
+        return res.status(commonError.statusCode).send(commonError);
+    }
+
+    const result = {
+        limit: limit,
+        offset: offset,
+        total: await PostModel.countDocuments(),
+        posts: await PostModel.find({}, { content: 0, comments: 0, createdAt: 0, updatedAt: 0, __v: 0 }, { skip: offset, limit: limit })
+    };
+    return res.status(200).json(result);
 }
 
 export const getSinglePost = async (req: Request, res: Response, next: NextFunction) => {
