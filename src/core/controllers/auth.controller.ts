@@ -30,7 +30,7 @@ export const register = async (
         return response.status(400).json(commonError);
     } else {
         try {
-            const exists = await UserModel.findOne({ email });
+            const exists = await UserModel.findOne({ email })
 
             if (exists) {
                 const existsError: ICommonError = {
@@ -88,7 +88,7 @@ export const login = async (
     }
 
     try {
-        const token = jwt.sign({ userId: user.id }, <string>process.env.JWT_SECRET, { expiresIn: "1d" });
+        const token = jwt.sign({ userId: user.id }, <string>process.env.JWT_SECRET, { expiresIn: "2d" });
 
         response.setHeader("X-Access-Token", `Bearer ${token}`);
 

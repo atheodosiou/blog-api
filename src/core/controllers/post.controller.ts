@@ -8,15 +8,25 @@ import { type } from 'os';
 let user: IUser | null;
 
 export const getPosts = async (req: Request, res: Response, next: NextFunction) => {
-    const { limit, offset } = req.body;
-    if (limit === null || limit === undefined || offset === null || offset === undefined) {
+    const { limit, offset, status } = req.body;
+    if (limit === null || limit === undefined || offset === null || offset === undefined || status === null || status === undefined) {
         const commonError: ICommonError = {
             statusCode: 400,
             message: "Bad request",
-            details: "Properties 'limit' and 'offset' are required"
+            details: "Properties 'limit', 'offset' and status are required"
         };
         return res.status(commonError.statusCode).send(commonError);
     }
+
+    if (status !== 'published' && status !== 'draft') {
+        const commonError: ICommonError = {
+            statusCode: 400,
+            message: "Bad request",
+            details: "Status must be 'published' or 'draft"
+        };
+        return res.status(commonError.statusCode).send(commonError);
+    }
+
     if (limit < 0 || offset < 0) {
         const commonError: ICommonError = {
             statusCode: 400,
@@ -38,7 +48,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
         limit: limit,
         offset: offset,
         total: await PostModel.countDocuments(),
-        posts: await PostModel.find({}, { content: 0, comments: 0, createdAt: 0, updatedAt: 0, __v: 0 }, { skip: offset, limit: limit })
+        posts: await PostModel.find({ status: status }, { content: 0, comments: 0, createdAt: 0, updatedAt: 0, __v: 0 }, { skip: offset, limit: limit })
     };
     return res.status(200).json(result);
 }

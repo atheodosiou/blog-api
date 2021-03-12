@@ -5,7 +5,8 @@ dotenv.config();
 export async function connectToDB() {
     const options: ConnectionOptions = {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useCreateIndex: true
     };
 
     await connect(

@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 import Joi from "@hapi/joi";
 import { Document } from "mongoose";
 import { CategorySchema } from './category.model';
-import { IUser } from "./user.model";
 
 export interface IPost extends Document {
     title: string;
@@ -11,6 +10,7 @@ export interface IPost extends Document {
     author: string;
     imageUrl: string;
     content: string;
+    status: 'published' | 'draft';
     comments?: IComment[];
     likes?: number;
     shares?: number
@@ -35,9 +35,10 @@ export const PostSchema = new Schema(
         title: { type: String, min: 10, required: true, unique: true, default: "" },
         preview: { type: String, min: 10, required: true, default: "", },
         postDate: { type: Date, default: new Date() },
-        author: { type: String, required: true},
+        author: { type: String, required: true },
         imageUrl: { type: String, required: true },
         content: { type: String, required: true },
+        status: { type: String, enum: ['published', 'draft'], default: 'draft' },
         comments: { type: [CommentSchema], default: [] },
         likes: { type: Number, default: 0 },
         shares: { type: Number, default: 0 },
@@ -57,6 +58,7 @@ export const PostCreationValidation = Joi.object({
     author: Joi.string().optional(),
     imageUrl: Joi.string().required(),
     content: Joi.string().required(),
+    status: Joi.string().valid('published', 'draft'),
     comments: Joi.array().optional(),
     likes: Joi.number().optional(),
     shares: Joi.number().optional(),
