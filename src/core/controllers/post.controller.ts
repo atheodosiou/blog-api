@@ -13,7 +13,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
         const commonError: ICommonError = {
             statusCode: 400,
             message: "Bad request",
-            details: "Properties 'limit', 'offset' and status are required"
+            details: "Properties 'limit', 'offset' and 'status' are required"
         };
         return res.status(commonError.statusCode).send(commonError);
     }
@@ -47,7 +47,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
     const result = {
         limit: limit,
         offset: offset,
-        total: await PostModel.countDocuments(),
+        total: await PostModel.countDocuments({ status: status }),
         posts: await PostModel.find({ status: status }, { content: 0, comments: 0, createdAt: 0, updatedAt: 0, __v: 0 }, { skip: offset, limit: limit })
     };
     return res.status(200).json(result);

@@ -58,7 +58,7 @@ export const login = async (
     next: NextFunction
 ) => {
     const { error, value } = UserLoginValidation.validate(request.body);
-
+    console.log("Login called")
     if (error) {
         const commonError: ICommonError = {
             statusCode: 400,
