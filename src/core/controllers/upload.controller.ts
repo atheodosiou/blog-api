@@ -12,6 +12,7 @@ export const uploadImage = async (req: Request, res: Response, next: NextFunctio
                 fileName: req.file.originalname,
                 fileType: req.file.mimetype,
                 fileSize: req.file.size,
+                fileLocalPath:req.file.path,
                 filePath: `${req.protocol}://${req.hostname}:${process.env.PORT}/${req.file.path}`
             });
             const savedMedia = await mediaToSave.save();
