@@ -804,3 +804,7 @@
 ::1 - - [23/Mar/2021:23:02:13 +0000] "GET /uploads/2021-03-23T22:57:01.701Z_book-3998252__340.jpg HTTP/1.1" 200 21745 "-" "PostmanRuntime/7.26.8"
 ::1 - - [23/Mar/2021:23:02:21 +0000] "POST /api/v1/upload/images HTTP/1.1" 200 360 "-" "PostmanRuntime/7.26.8"
 ::1 - - [23/Mar/2021:23:02:25 +0000] "GET /uploads/2021-03-23T23:02:21.217Z_book-3998252__340.jpg HTTP/1.1" 200 21745 "-" "PostmanRuntime/7.26.8"
+::1 - - [25/Mar/2021:16:14:14 +0000] "OPTIONS /api/v1/upload/images HTTP/1.1" 200 2 "http://localhost:4200/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
+::1 - - [25/Mar/2021:16:14:14 +0000] "POST /api/v1/upload/images HTTP/1.1" 200 286 "http://localhost:4200/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
+::1 - - [25/Mar/2021:16:19:17 +0000] "GET /api/v1/media/images HTTP/1.1" 200 298 "-" "PostmanRuntime/7.26.8"
+::1 - - [25/Mar/2021:16:19:25 +0000] "GET /uploads/2021-03-25T16:14:14.607Z_book-3998252__340.jpg HTTP/1.1" 200 21745 "-" "PostmanRuntime/7.26.8"
