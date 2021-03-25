@@ -3,6 +3,7 @@ import { authRouter } from "./auth.routes";
 import { postRouter } from './post.routes';
 import { uploadRouter } from './upload.routes';
 import { mediaRouter } from './media.routes';
+import { categoryRouter } from './category.routes';
 
 const router = Router();
 
@@ -14,5 +15,7 @@ router.use("/posts", postRouter);
 router.use("/upload", uploadRouter);
 //Media
 router.use('/media', mediaRouter)
+//Categories
+router.use('/categories', categoryRouter);
 
 export { router };

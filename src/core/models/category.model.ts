@@ -3,12 +3,12 @@ import Joi from "@hapi/joi";
 import { Document } from "mongoose";
 
 export interface ICategory extends Document {
-    cagegory: string;
+    category: string;
 }
 
 export const CategorySchema = new Schema(
     {
-        title: { type: String, min: 3, required: true, unique: true },
+        category: { type: String, min: 3, required: true, unique: true },
     },
     { timestamps: true }
 );
