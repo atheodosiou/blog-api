@@ -9,7 +9,7 @@ export interface IPost extends Document {
     postDate: string;
     author: string;
     imageUrl: string;
-    content: string;
+    content: any;
     status: 'published' | 'draft';
     comments?: IComment[];
     likes?: number;
@@ -37,7 +37,7 @@ export const PostSchema = new Schema(
         postDate: { type: Date, default: new Date() },
         author: { type: String, required: true },
         imageUrl: { type: String, required: true },
-        content: { type: String, required: true },
+        content: { type: Schema.Types.Mixed, required: true },
         status: { type: String, enum: ['published', 'draft'], default: 'draft' },
         comments: { type: [CommentSchema], default: [] },
         likes: { type: Number, default: 0 },
@@ -57,7 +57,7 @@ export const PostCreationValidation = Joi.object({
     postDate: Joi.date().optional(),
     author: Joi.string().optional(),
     imageUrl: Joi.string().required(),
-    content: Joi.string().required(),
+    content: Joi.object().required(),
     status: Joi.string().valid('published', 'draft'),
     comments: Joi.array().optional(),
     likes: Joi.number().optional(),
