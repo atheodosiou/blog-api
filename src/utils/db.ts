@@ -7,7 +7,7 @@ export async function connectToDB() {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
-        useFindAndModify:true
+        useFindAndModify: false
     };
 
     await connect(

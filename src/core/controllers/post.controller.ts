@@ -18,11 +18,11 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
         return res.status(commonError.statusCode).send(commonError);
     }
 
-    if (status !== 'published' && status !== 'draft') {
+    if (status !== 'all' && status !== 'published' && status !== 'draft') {
         const commonError: ICommonError = {
             statusCode: 400,
             message: "Bad request",
-            details: "Status must be 'published' or 'draft"
+            details: "Status must be 'all', 'published' or 'draft"
         };
         return res.status(commonError.statusCode).send(commonError);
     }
@@ -47,8 +47,12 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
     const result = {
         limit: limit,
         offset: offset,
-        total: await PostModel.countDocuments({ status: status }),
-        posts: await PostModel.find({ status: status }, { __v: 0 }, { skip: offset, limit: limit })
+        total: status === 'all' ?
+            await PostModel.countDocuments({}) :
+            await PostModel.countDocuments({ status: status }),
+        posts: status === 'all' ?
+            await PostModel.find({}, {}, { skip: offset, limit: limit }).sort({ postDate: -1 }) :
+            await PostModel.find({ status: status }, {}, { skip: offset, limit: limit }).sort({ postDate: -1 })
     };
     return res.status(200).json(result);
 }
@@ -57,8 +61,9 @@ export const getSinglePost = async (req: Request, res: Response, next: NextFunct
     if (!isValidObjectId(req.params.postId)) {
         return res.status(400).json(getErrorMessage("The object id is not valid", 400));
     }
-    const posts = await PostModel.findOne({ _id: req.params.postId }, { createdAt: 0, updatedAt: 0, __v: 0 });
-    return res.status(200).json(posts);
+    const post = await PostModel.findOne({ _id: req.params.postId });
+    console.log(post);
+    return res.status(200).json(post);
 }
 
 export const addPost = async (req: Request, res: Response, next: NextFunction) => {
@@ -78,12 +83,37 @@ export const addPost = async (req: Request, res: Response, next: NextFunction) =
     }
 }
 
-export const updatePost = (req: Request, res: Response, next: NextFunction) => {
-    return res.status(200).json({ message: 'Update post' });
+export const updatePost = async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
+    if (!postId) {
+        return res.status(400).json({ message: 'Bad request! "postId" is required.' });
+    }
+    if (!req.body) {
+        return res.status(400).json({ message: 'Bad request! Post is required.' });
+    }
+
+    try {
+        const post = await PostModel.findOne({ _id: postId });
+        Object.assign(post, req.body);
+        const updated = await post?.save()
+        res.status(200).json(updated);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Internal Server Error', details: error });
+    }
 }
 
-export const deletePost = (req: Request, res: Response, next: NextFunction) => {
-    return res.status(200).json({ message: 'Delete post' });
+export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
+    if (!postId) {
+        return res.status(400).json({ message: 'Bad request! "postId" is required.' });
+    }
+    try {
+        const deleted = await PostModel.findOneAndRemove({ _id: postId });
+        res.status(200).json({ message: `Post with id:${postId}, was deleted successfully!` });
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Server Error', details: error });
+    }
 }
 
 export const addComment = (req: Request, res: Response, next: NextFunction) => {
