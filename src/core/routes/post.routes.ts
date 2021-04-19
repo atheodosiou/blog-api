@@ -8,6 +8,9 @@ const postRouter = Router();
 // Get all posts
 postRouter.post("/paginated", apiKeyVerificaton, controllers.getPosts);
 
+//Get posts statistics
+postRouter.get("/stats", auth, controllers.getStats);
+
 // Get post by id
 postRouter.get("/:postId", auth, controllers.getSinglePost);
 

@@ -7,6 +7,23 @@ import { type } from 'os';
 
 let user: IUser | null;
 
+export const getStats = async (req: Request, res: Response, next: NextFunction) => {
+    const totalByStatus = await PostModel.aggregate([
+        { $match: {} },
+        { $group: { _id: "$status", total: { $sum: 1 } } }
+    ]);
+    const posts = await PostModel.find({});
+    const results = {
+        totalPublished: totalByStatus.find(x => x._id === 'published').total || 0,
+        totalDraft: totalByStatus.find(x => x._id === 'draft').total || 0,
+        totalViews: 0,
+        totalLikes: posts.reduce((a, b) => { return a + (b.likes || 0) }, 0),
+        totalComments: posts.reduce((a, b) => { return a + (b.comments?.length || 0) }, 0),
+        totalShares: posts.reduce((a, b) => { return a + (b.shares || 0) }, 0)
+    };
+    return res.status(200).json(results);
+}
+
 export const getPosts = async (req: Request, res: Response, next: NextFunction) => {
     const { limit, offset, status } = req.body;
     if (limit === null || limit === undefined || offset === null || offset === undefined || status === null || status === undefined) {
